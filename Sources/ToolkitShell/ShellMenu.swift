@@ -63,6 +63,29 @@ public enum ShellMenu {
          item("Paste", #selector(NSText.paste(_:)), "v"),
          web(selectAllTitle, "edit.selectAll", "a")]
     }
+    /// "Sign in to the toolkit…" and "Sign out", for `appMenuExtras`.
+    ///
+    /// Empty unless the app set a `connectScheme` (which `portalOrigin` does
+    /// for it), so an app that has not opted in gets no items, no separator
+    /// and no change to the bar it has today:
+    ///
+    ///     appMenuExtras: [ShellMenu.web("Appearance…", "view.appearance", ",")] + ShellMenu.portalItems()
+    ///
+    /// The first item opens the Sync sheet — the Portal's address lives there,
+    /// so a person can point the app at a different one — and the sheet starts
+    /// the sign-in. "Sign out" is disabled until there is something to sign
+    /// out of.
+    public static func portalItems() -> [NSMenuItem] {
+        guard ShellConfig.current.pairsWithPortal else { return [] }
+        let portal = ShellPortal.shared
+        let signIn = item("Sign in to the toolkit…", #selector(ShellPortal.showSyncSheet(_:)))
+        let signOut = item("Sign out", #selector(ShellPortal.signOutOfToolkit(_:)))
+        // A target of its own: these do not belong to the front window, and
+        // "Sign out" has to stay alive when no document is open at all.
+        for entry in [signIn, signOut] { entry.target = portal }
+        return [signIn, signOut]
+    }
+
     public static func fullScreenItem() -> NSMenuItem {
         item("Enter Full Screen", #selector(NSWindow.toggleFullScreen(_:)), "f", [.command, .control])
     }
@@ -133,6 +156,36 @@ open class ShellAppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
     open func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool { true }
+
+    /// Where a pairing callback lands: Launch Services routes
+    /// `<connect scheme>://connect?url=…&token=…` here.
+    ///
+    /// `ASWebAuthenticationSession` usually hands the redirect straight back
+    /// to the flow that opened it, and then this never runs. It runs for the
+    /// cases where that session is gone — the person finished signing in after
+    /// it timed out, or opened a connect link from the Portal in their own
+    /// browser — which is exactly when the app most needs to accept it.
+    open func application(_ application: NSApplication, open urls: [URL]) {
+        let others = urls.filter { !ShellPortal.shared.handle($0) }
+        // AppKit stops opening documents itself the moment a delegate
+        // implements this method, so every URL that is not ours has to be
+        // handed on by hand or the app quietly stops opening files.
+        for url in others where url.isFileURL {
+            NSDocumentController.shared.openDocument(withContentsOf: url, display: true) { _, _, error in
+                if let error { NSDocumentController.shared.presentError(error) }
+            }
+        }
+    }
+
+    /// An app that does not pair should behave exactly as it did before that
+    /// method existed. Hiding the selector is how: with no delegate method to
+    /// call, AppKit keeps its own document-opening path, untouched.
+    open override func responds(to selector: Selector!) -> Bool {
+        if selector == #selector(application(_:open:)) {
+            return ShellConfig.isConfigured && ShellConfig.current.pairsWithPortal
+        }
+        return super.responds(to: selector)
+    }
 }
 
 public enum ShellApp {

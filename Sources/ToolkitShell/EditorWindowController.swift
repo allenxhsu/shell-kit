@@ -64,6 +64,7 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
         case "ready":
             pageReady = true
             deliverPendingText()
+            deliverRemote()
         case "changed":
             if let json = body["json"] as? String {
                 webDocument?.pageDidChange(json: json, dirty: body["dirty"] as? Bool ?? false, name: body["name"] as? String ?? config.untitledName)
@@ -95,6 +96,26 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
                                     in: nil, in: .page) { [weak doc] _ in
             doc?.didDeliverPendingText()
         }
+    }
+
+    /// Hand this page the Portal pairing the app already has, if any.
+    ///
+    /// A window opened after pairing — a second document, or the next launch —
+    /// has to be told as well, or it sits there syncing to nothing while the
+    /// window that was open when the person signed in syncs happily.
+    public func deliverRemote() {
+        guard config.pairsWithPortal else { return }
+        sendRemote(ShellPortal.remoteArguments(ShellPortal.shared.pairing))
+    }
+
+    /// `window.<name>Host.remote({url, token})` — the page treats the pair
+    /// exactly as it treats a URL and token typed into its Sync settings.
+    /// Two empty strings mean signed out, which is what clearing those fields
+    /// by hand does.
+    public func sendRemote(_ arguments: [String: String]) {
+        guard pageReady else { return }
+        webView.callAsyncJavaScript(PortalBridge.remoteScript(hostObject: config.hostObject),
+                                    arguments: arguments, in: nil, in: .page) { _ in }
     }
 
     public func documentWasSaved(as fileName: String) {

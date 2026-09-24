@@ -1,3 +1,6 @@
+// VENDORED COPY of ../shell-kit/js/host.js (commit a4e15b7, 2026-09-24).
+// Do not edit here: change shell-kit, then run  node ../shell-kit/scripts/copy-into.mjs <this file>
+
 // shell-kit/js/host.js — the page's half of the bridge to the macOS shell
 // (ToolkitShell, ../shell-kit). Apps vendor a copy of this file:
 //   node ../shell-kit/scripts/copy-into.mjs src/host.js
