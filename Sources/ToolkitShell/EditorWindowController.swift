@@ -7,7 +7,7 @@ import UniformTypeIdentifiers
 ///
 /// Subclass and override `handleMessage` to answer messages the kit does not
 /// know (an app-specific export, say); return true when you took it.
-open class EditorWindowController: NSWindowController, WKScriptMessageHandler, WKNavigationDelegate {
+open class EditorWindowController: NSWindowController, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate {
     public private(set) var webView: WKWebView!
     public private(set) var pageReady = false
     private var pdfExporter: PDFExporter?
@@ -41,6 +41,7 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
 
         webView = WKWebView(frame: window.contentLayoutRect, configuration: wk)
         webView.navigationDelegate = self
+        webView.uiDelegate = self
         webView.allowsBackForwardNavigationGestures = false
         webView.allowsMagnification = false
         webView.setValue(false, forKey: "drawsBackground")
@@ -175,6 +176,18 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
         if url.scheme == config.scheme || url.scheme == "about" { decisionHandler(.allow); return }
         if url.scheme == "http" || url.scheme == "https" { NSWorkspace.shared.open(url) }
         decisionHandler(.cancel)
+    }
+
+    // MARK: File pickers
+
+    /// A page's `<input type="file">`: the system Open panel, as a sheet on this window.
+    public func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = parameters.allowsDirectories
+        panel.allowsMultipleSelection = parameters.allowsMultipleSelection
+        if let window { panel.beginSheetModal(for: window) { completionHandler($0 == .OK ? panel.urls : nil) } }
+        else { completionHandler(panel.runModal() == .OK ? panel.urls : nil) }
     }
 
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
