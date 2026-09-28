@@ -1,6 +1,10 @@
 import XCTest
 @testable import ToolkitShell
 
+// The Mac shell's own tests: menus, documents, the app delegate, and the
+// build scripts they run through Process. `swift test` runs on macOS only.
+#if os(macOS)
+
 final class ShellTests: XCTestCase {
     /// The kit's own repository root, from …/Tests/ToolkitShellTests/ShellTests.swift.
     private var kitRoot: URL {
@@ -72,3 +76,4 @@ final class ShellTests: XCTestCase {
         XCTAssertEqual(ShellMenu.commandIDs(inJavaScript: js), ["file.new", "file.open", "export.pdfAll", "help.guide"])
     }
 }
+#endif
