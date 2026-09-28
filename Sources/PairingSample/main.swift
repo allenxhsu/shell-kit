@@ -8,6 +8,7 @@
 // Everything here is what README's "Adopting it" describes: a config, an empty
 // document subclass, and a menu table. Pairing adds one argument —
 // `portalOrigin:` — and one entry in the app menu, `ShellMenu.portalItems()`.
+// Examples/ios-sample is the same page in the iPhone shell.
 import AppKit
 import ToolkitShell
 
@@ -24,9 +25,15 @@ let web = URL(fileURLWithPath: #filePath)
 // sheet, so pointing the sample at a real deployment needs no rebuild.
 let portal = ProcessInfo.processInfo.environment["PORTAL_ORIGIN"] ?? "http://127.0.0.1:7788"
 
+// One app-specific message, the same one the iPhone sample handles: the page
+// posts `{ type: 'echo', text }` and gets `event({ type: 'echo', text, platform })` back.
+let echo: ShellHandler = { message, page in
+    page.send(["type": "echo", "text": message["text"] as? String ?? "", "platform": "macos"])
+}
+
 ShellApp.run(config: ShellConfig(appName: "Pairing Sample", handlerName: "sample", scheme: "sample-app",
                                  fileSuffix: ".sample.json", documentNoun: "note",
-                                 repositoryRoot: web, portalOrigin: portal)) {
+                                 repositoryRoot: web, portalOrigin: portal, handlers: ["echo": echo])) {
     ShellMenu.mainMenu(
         appMenuExtras: ShellMenu.portalItems(),
         menus: [

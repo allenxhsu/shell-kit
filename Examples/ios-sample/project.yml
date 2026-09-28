@@ -1,0 +1,57 @@
+# The iPhone counterpart of Sources/PairingSample: Examples/sample-web in
+# ShellScene, with one app handler (echo). CI builds it for the Simulator,
+# which is what proves the iOS half of the package compiles and links.
+#
+#   brew install xcodegen
+#   cd Examples/ios-sample && xcodegen generate
+#   xcodebuild -project ShellSample.xcodeproj -scheme ShellSample \
+#     -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+#
+# Like the package, it needs ../sync-kit beside the shell-kit checkout.
+name: ShellSample
+options:
+  bundleIdPrefix: org.toolkit.shell-kit
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+packages:
+  shell-kit:
+    path: ../..
+targets:
+  ShellSample:
+    type: application
+    # A shared scheme, so xcodebuild -scheme finds it on a fresh checkout.
+    scheme: {}
+    platform: iOS
+    sources:
+      - path: Sources
+      # A folder reference: copied into the bundle as sample-web/, the webRoot.
+      - path: ../sample-web
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: shell-kit
+        product: ToolkitShell
+    info:
+      path: Generated/Info.plist
+      properties:
+        CFBundleDisplayName: Shell Sample
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # One scheme for deep links (shellsample://…) and the Portal's
+        # connect link (shellsample://connect?…), as an app usually has.
+        CFBundleURLTypes:
+          - CFBundleURLName: org.toolkit.shell-kit.sample
+            CFBundleURLSchemes: [shellsample]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.toolkit.shell-kit.sample
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
