@@ -1,0 +1,1540 @@
+{
+  "format": "sysml-modeler",
+  "version": 1,
+  "name": "shell-kit architecture",
+  "rootId": "pa_001",
+  "elements": {
+    "pa_001": {
+      "id": "pa_001",
+      "kind": "package",
+      "name": "shell-kit architecture",
+      "ownerId": null,
+      "doc": ""
+    },
+    "pa_008": {
+      "id": "pa_008",
+      "kind": "package",
+      "name": "ToolkitShell",
+      "ownerId": "pa_001",
+      "doc": "Sources/ToolkitShell/ — the SwiftPM library (macOS 14, Swift 6 toolchain)."
+    },
+    "pa_004": {
+      "id": "pa_004",
+      "kind": "package",
+      "name": "js",
+      "ownerId": "pa_001",
+      "doc": "js/host.js — the page’s half of the bridge. Apps vendor a copy."
+    },
+    "pa_005": {
+      "id": "pa_005",
+      "kind": "package",
+      "name": "scripts",
+      "ownerId": "pa_001",
+      "doc": "copy-into.mjs, url-types.mjs, dev-portal.mjs, build-sample-app.sh."
+    },
+    "pa_002": {
+      "id": "pa_002",
+      "kind": "package",
+      "name": "Examples",
+      "ownerId": "pa_001",
+      "doc": "Examples/sample-web and Sources/PairingSample: the smallest page the shell can host, with pairing."
+    },
+    "pa_007": {
+      "id": "pa_007",
+      "kind": "package",
+      "name": "Tests",
+      "ownerId": "pa_001",
+      "doc": "swift test — ShellTests, PortalTests."
+    },
+    "pa_006": {
+      "id": "pa_006",
+      "kind": "package",
+      "name": "sync-kit/swift",
+      "ownerId": "pa_001",
+      "doc": "A sibling package: PairingFlow comes from here, so a clone needs sync-kit beside it."
+    },
+    "pa_003": {
+      "id": "pa_003",
+      "kind": "package",
+      "name": "Hosted apps",
+      "ownerId": "pa_001",
+      "doc": "The web apps that run inside the shell."
+    },
+    "pa_009": {
+      "id": "pa_009",
+      "kind": "package",
+      "name": "Use cases",
+      "ownerId": "pa_001",
+      "doc": "What the shell adds that a browser tab cannot."
+    },
+    "bl_014": {
+      "id": "bl_014",
+      "kind": "block",
+      "name": "ShellApp",
+      "ownerId": "pa_008",
+      "doc": "ShellApp.run(config:menu:) — the whole app target is a config, an (often empty) document subclass and a menu table.",
+      "isAbstract": false
+    },
+    "bl_015": {
+      "id": "bl_015",
+      "kind": "block",
+      "name": "ShellConfig",
+      "ownerId": "pa_008",
+      "doc": "Per-app settings: app name, handler name, URL scheme, file suffix, document noun, imported types, repository root, Portal origin.",
+      "isAbstract": false
+    },
+    "bl_020": {
+      "id": "bl_020",
+      "kind": "block",
+      "name": "WebRoot",
+      "ownerId": "pa_008",
+      "doc": "<scheme>://app/… serving the web root out of the repository: a MIME table and a path guard.",
+      "isAbstract": false
+    },
+    "bl_019": {
+      "id": "bl_019",
+      "kind": "block",
+      "name": "WebDocument",
+      "ownerId": "pa_008",
+      "doc": "NSDocument base: reads a file, hands its text to the page, keeps the JSON the page reports, writes it back.",
+      "isAbstract": false
+    },
+    "bl_011": {
+      "id": "bl_011",
+      "kind": "block",
+      "name": "EditorWindowController",
+      "ownerId": "pa_008",
+      "doc": "The window, the WKWebView, and the message channel between them.",
+      "isAbstract": false
+    },
+    "bl_013": {
+      "id": "bl_013",
+      "kind": "block",
+      "name": "PDFExporter",
+      "ownerId": "pa_008",
+      "doc": "SVG pages → one vector PDF, a page per diagram.",
+      "isAbstract": false
+    },
+    "bl_016": {
+      "id": "bl_016",
+      "kind": "block",
+      "name": "ShellMenu",
+      "ownerId": "pa_008",
+      "doc": "item / web / submenu / recentMenu and the standard menus. A web item runs a command id in the front window’s page.",
+      "isAbstract": false
+    },
+    "bl_018": {
+      "id": "bl_018",
+      "kind": "block",
+      "name": "ShellPortal",
+      "ownerId": "pa_008",
+      "doc": "Pairing with the Portal: the menu items, the Sync sheet, the Keychain, and remote() into every open page.",
+      "isAbstract": false
+    },
+    "bl_017": {
+      "id": "bl_017",
+      "kind": "block",
+      "name": "ShellPlist",
+      "ownerId": "pa_008",
+      "doc": "Reads a built bundle back: is the connect scheme registered?",
+      "isAbstract": false
+    },
+    "bl_008": {
+      "id": "bl_008",
+      "kind": "block",
+      "name": "host.js",
+      "ownerId": "pa_004",
+      "doc": "hosted, post(), saveViaHost(), initHost({ name, load, command, saved, remote }). Inert in a browser.",
+      "isAbstract": false
+    },
+    "bl_007": {
+      "id": "bl_007",
+      "kind": "block",
+      "name": "Web page",
+      "ownerId": "pa_003",
+      "doc": "The app itself: its model, diagrams and every editing rule, served with no build step.",
+      "isAbstract": false
+    },
+    "bl_010": {
+      "id": "bl_010",
+      "kind": "block",
+      "name": "PairingFlow",
+      "ownerId": "pa_006",
+      "doc": "Builds and reads <scheme>://connect?url=…&token=… links.",
+      "isAbstract": false
+    },
+    "bl_012": {
+      "id": "bl_012",
+      "kind": "block",
+      "name": "Keychain",
+      "ownerId": "pa_008",
+      "doc": "Where a device token lives on the Mac.",
+      "isAbstract": false
+    },
+    "pr_006": {
+      "id": "pr_006",
+      "kind": "property",
+      "name": "config",
+      "ownerId": "bl_014",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_015",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_007": {
+      "id": "pr_007",
+      "kind": "property",
+      "name": "menu",
+      "ownerId": "bl_014",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_016",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_008": {
+      "id": "pr_008",
+      "kind": "property",
+      "name": "portal",
+      "ownerId": "bl_014",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_018",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_009": {
+      "id": "pr_009",
+      "kind": "property",
+      "name": "windows",
+      "ownerId": "bl_014",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_011",
+      "typeText": "",
+      "multiplicity": "0..*",
+      "defaultValue": ""
+    },
+    "pr_002": {
+      "id": "pr_002",
+      "kind": "property",
+      "name": "document",
+      "ownerId": "bl_011",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_019",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_003": {
+      "id": "pr_003",
+      "kind": "property",
+      "name": "page",
+      "ownerId": "bl_011",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_007",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_005": {
+      "id": "pr_005",
+      "kind": "property",
+      "name": "webRoot",
+      "ownerId": "bl_011",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_020",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_004": {
+      "id": "pr_004",
+      "kind": "property",
+      "name": "pdf",
+      "ownerId": "bl_011",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_013",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_001": {
+      "id": "pr_001",
+      "kind": "property",
+      "name": "host",
+      "ownerId": "bl_007",
+      "doc": "",
+      "propKind": "part",
+      "typeId": "bl_008",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_010": {
+      "id": "pr_010",
+      "kind": "property",
+      "name": "pairing",
+      "ownerId": "bl_018",
+      "doc": "",
+      "propKind": "reference",
+      "typeId": "bl_010",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_011": {
+      "id": "pr_011",
+      "kind": "property",
+      "name": "tokens",
+      "ownerId": "bl_018",
+      "doc": "",
+      "propKind": "reference",
+      "typeId": "bl_012",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "pr_012": {
+      "id": "pr_012",
+      "kind": "property",
+      "name": "config",
+      "ownerId": "bl_019",
+      "doc": "",
+      "propKind": "reference",
+      "typeId": "bl_015",
+      "typeText": "",
+      "multiplicity": "1",
+      "defaultValue": ""
+    },
+    "va_002": {
+      "id": "va_002",
+      "kind": "valueType",
+      "name": "PageCall",
+      "ownerId": "pa_004",
+      "doc": "",
+      "unit": "load(text, fileName) · command(id) · saved(fileName) · remote({url, token})"
+    },
+    "va_001": {
+      "id": "va_001",
+      "kind": "valueType",
+      "name": "HostMessage",
+      "ownerId": "pa_004",
+      "doc": "",
+      "unit": "ready · changed · save · saveFile · pdf · new · open · log"
+    },
+    "va_004": {
+      "id": "va_004",
+      "kind": "valueType",
+      "name": "FileText",
+      "ownerId": "pa_008",
+      "doc": "",
+      "unit": "the document’s JSON"
+    },
+    "va_003": {
+      "id": "va_003",
+      "kind": "valueType",
+      "name": "Files",
+      "ownerId": "pa_008",
+      "doc": "",
+      "unit": "index.html, src/**, ui-kit/**"
+    },
+    "po_008": {
+      "id": "po_008",
+      "kind": "port",
+      "name": "text",
+      "ownerId": "bl_019",
+      "doc": "",
+      "typeId": "va_004",
+      "typeText": "",
+      "direction": "out",
+      "multiplicity": "1"
+    },
+    "po_007": {
+      "id": "po_007",
+      "kind": "port",
+      "name": "report",
+      "ownerId": "bl_019",
+      "doc": "",
+      "typeId": "va_004",
+      "typeText": "",
+      "direction": "in",
+      "multiplicity": "1"
+    },
+    "po_004": {
+      "id": "po_004",
+      "kind": "port",
+      "name": "window.<name>Host",
+      "ownerId": "bl_007",
+      "doc": "",
+      "typeId": "va_002",
+      "typeText": "",
+      "direction": "in",
+      "multiplicity": "1"
+    },
+    "po_002": {
+      "id": "po_002",
+      "kind": "port",
+      "name": "messageHandlers.<name>",
+      "ownerId": "bl_007",
+      "doc": "",
+      "typeId": "va_001",
+      "typeText": "",
+      "direction": "out",
+      "multiplicity": "1"
+    },
+    "po_003": {
+      "id": "po_003",
+      "kind": "port",
+      "name": "model",
+      "ownerId": "bl_007",
+      "doc": "",
+      "typeId": "va_004",
+      "typeText": "",
+      "direction": "inout",
+      "multiplicity": "1"
+    },
+    "po_001": {
+      "id": "po_001",
+      "kind": "port",
+      "name": "fetch",
+      "ownerId": "bl_007",
+      "doc": "",
+      "typeId": "va_003",
+      "typeText": "",
+      "direction": "in",
+      "multiplicity": "1"
+    },
+    "po_009": {
+      "id": "po_009",
+      "kind": "port",
+      "name": "<scheme>://app/",
+      "ownerId": "bl_020",
+      "doc": "",
+      "typeId": "va_003",
+      "typeText": "",
+      "direction": "out",
+      "multiplicity": "1"
+    },
+    "po_005": {
+      "id": "po_005",
+      "kind": "port",
+      "name": "evaluateJavaScript",
+      "ownerId": "bl_011",
+      "doc": "",
+      "typeId": "va_002",
+      "typeText": "",
+      "direction": "in",
+      "multiplicity": "1"
+    },
+    "po_006": {
+      "id": "po_006",
+      "kind": "port",
+      "name": "userContentController",
+      "ownerId": "bl_011",
+      "doc": "",
+      "typeId": "va_001",
+      "typeText": "",
+      "direction": "out",
+      "multiplicity": "1"
+    },
+    "bl_002": {
+      "id": "bl_002",
+      "kind": "block",
+      "name": "Hosted app",
+      "ownerId": "pa_003",
+      "doc": "Depends on the package from its macos/Package.swift and vendors js/host.js as src/host.js.",
+      "isAbstract": false
+    },
+    "bl_006": {
+      "id": "bl_006",
+      "kind": "block",
+      "name": "SysML Modeler",
+      "ownerId": "pa_003",
+      "doc": "",
+      "isAbstract": false
+    },
+    "bl_004": {
+      "id": "bl_004",
+      "kind": "block",
+      "name": "Project Planner",
+      "ownerId": "pa_003",
+      "doc": "",
+      "isAbstract": false
+    },
+    "bl_001": {
+      "id": "bl_001",
+      "kind": "block",
+      "name": "BOM Manager",
+      "ownerId": "pa_003",
+      "doc": "",
+      "isAbstract": false
+    },
+    "bl_003": {
+      "id": "bl_003",
+      "kind": "block",
+      "name": "Profiler",
+      "ownerId": "pa_003",
+      "doc": "Single-window.",
+      "isAbstract": false
+    },
+    "bl_005": {
+      "id": "bl_005",
+      "kind": "block",
+      "name": "Pyramid Principle",
+      "ownerId": "pa_003",
+      "doc": "Single-window.",
+      "isAbstract": false
+    },
+    "bl_009": {
+      "id": "bl_009",
+      "kind": "block",
+      "name": "copy-into",
+      "ownerId": "pa_005",
+      "doc": "Copies js/host.js into an app; --check reports drift.",
+      "isAbstract": false
+    },
+    "ac_002": {
+      "id": "ac_002",
+      "kind": "actor",
+      "name": "Person",
+      "ownerId": "pa_009",
+      "doc": ""
+    },
+    "ac_003": {
+      "id": "ac_003",
+      "kind": "actor",
+      "name": "Portal",
+      "ownerId": "pa_009",
+      "doc": "The toolkit online: hands a device a URL and a token."
+    },
+    "ac_001": {
+      "id": "ac_001",
+      "kind": "actor",
+      "name": "Finder",
+      "ownerId": "pa_009",
+      "doc": ""
+    },
+    "us_003": {
+      "id": "us_003",
+      "kind": "useCase",
+      "name": "Open a document",
+      "ownerId": "pa_009",
+      "doc": "A document window per file; Finder can open one directly."
+    },
+    "us_006": {
+      "id": "us_006",
+      "kind": "useCase",
+      "name": "Save with a native panel",
+      "ownerId": "pa_009",
+      "doc": ""
+    },
+    "us_002": {
+      "id": "us_002",
+      "kind": "useCase",
+      "name": "Export a vector PDF",
+      "ownerId": "pa_009",
+      "doc": "A page per diagram, through PDFExporter."
+    },
+    "us_005": {
+      "id": "us_005",
+      "kind": "useCase",
+      "name": "Run a menu command",
+      "ownerId": "pa_009",
+      "doc": "A ShellMenu.web item runs a command id in the front page."
+    },
+    "us_004": {
+      "id": "us_004",
+      "kind": "useCase",
+      "name": "Pair with the Portal",
+      "ownerId": "pa_009",
+      "doc": "The Sync sheet; the token goes to the Keychain."
+    },
+    "us_001": {
+      "id": "us_001",
+      "kind": "useCase",
+      "name": "Configure sync in every open page",
+      "ownerId": "pa_009",
+      "doc": "remote({url, token}) into each window."
+    },
+    "bl_021": {
+      "id": "bl_021",
+      "kind": "block",
+      "name": "macOS app",
+      "ownerId": "pa_009",
+      "doc": "An app built on ToolkitShell.",
+      "isAbstract": false
+    }
+  },
+  "relationships": {
+    "rl_001": {
+      "id": "rl_001",
+      "kind": "connector",
+      "sourceId": "pr_002",
+      "targetId": "pr_003",
+      "name": "",
+      "ownerId": "bl_011",
+      "sourcePortId": "po_008",
+      "targetPortId": "po_003"
+    },
+    "rl_002": {
+      "id": "rl_002",
+      "kind": "connector",
+      "sourceId": "pr_003",
+      "targetId": "pr_002",
+      "name": "",
+      "ownerId": "bl_011",
+      "sourcePortId": "po_003",
+      "targetPortId": "po_007"
+    },
+    "rl_003": {
+      "id": "rl_003",
+      "kind": "connector",
+      "sourceId": "pr_005",
+      "targetId": "pr_003",
+      "name": "",
+      "ownerId": "bl_011",
+      "sourcePortId": "po_009",
+      "targetPortId": "po_001"
+    },
+    "rl_004": {
+      "id": "rl_004",
+      "kind": "connector",
+      "sourceId": null,
+      "targetId": "pr_003",
+      "name": "",
+      "ownerId": "bl_011",
+      "sourcePortId": "po_005",
+      "targetPortId": "po_004"
+    },
+    "rl_005": {
+      "id": "rl_005",
+      "kind": "connector",
+      "sourceId": "pr_003",
+      "targetId": null,
+      "name": "",
+      "ownerId": "bl_011",
+      "sourcePortId": "po_002",
+      "targetPortId": "po_006"
+    },
+    "rl_006": {
+      "id": "rl_006",
+      "kind": "generalization",
+      "sourceId": "bl_006",
+      "targetId": "bl_002",
+      "name": ""
+    },
+    "rl_007": {
+      "id": "rl_007",
+      "kind": "generalization",
+      "sourceId": "bl_004",
+      "targetId": "bl_002",
+      "name": ""
+    },
+    "rl_008": {
+      "id": "rl_008",
+      "kind": "generalization",
+      "sourceId": "bl_001",
+      "targetId": "bl_002",
+      "name": ""
+    },
+    "rl_009": {
+      "id": "rl_009",
+      "kind": "generalization",
+      "sourceId": "bl_003",
+      "targetId": "bl_002",
+      "name": ""
+    },
+    "rl_010": {
+      "id": "rl_010",
+      "kind": "generalization",
+      "sourceId": "bl_005",
+      "targetId": "bl_002",
+      "name": ""
+    },
+    "rl_011": {
+      "id": "rl_011",
+      "kind": "dependency",
+      "sourceId": "bl_002",
+      "targetId": "bl_014",
+      "name": "ToolkitShell"
+    },
+    "rl_012": {
+      "id": "rl_012",
+      "kind": "dependency",
+      "sourceId": "bl_002",
+      "targetId": "bl_008",
+      "name": "vendored src/host.js"
+    },
+    "rl_013": {
+      "id": "rl_013",
+      "kind": "dependency",
+      "sourceId": "bl_009",
+      "targetId": "bl_008",
+      "name": "copies"
+    },
+    "rl_014": {
+      "id": "rl_014",
+      "kind": "dependency",
+      "sourceId": "pa_008",
+      "targetId": "pa_006",
+      "name": "PairingFlow"
+    },
+    "rl_015": {
+      "id": "rl_015",
+      "kind": "dependency",
+      "sourceId": "pa_002",
+      "targetId": "pa_008",
+      "name": ""
+    },
+    "rl_016": {
+      "id": "rl_016",
+      "kind": "dependency",
+      "sourceId": "pa_002",
+      "targetId": "pa_004",
+      "name": ""
+    },
+    "rl_017": {
+      "id": "rl_017",
+      "kind": "dependency",
+      "sourceId": "pa_007",
+      "targetId": "pa_008",
+      "name": ""
+    },
+    "rl_018": {
+      "id": "rl_018",
+      "kind": "dependency",
+      "sourceId": "pa_005",
+      "targetId": "pa_004",
+      "name": ""
+    },
+    "rl_019": {
+      "id": "rl_019",
+      "kind": "dependency",
+      "sourceId": "pa_003",
+      "targetId": "pa_008",
+      "name": ""
+    },
+    "rl_020": {
+      "id": "rl_020",
+      "kind": "dependency",
+      "sourceId": "pa_003",
+      "targetId": "pa_004",
+      "name": ""
+    },
+    "rl_021": {
+      "id": "rl_021",
+      "kind": "association",
+      "sourceId": "ac_002",
+      "targetId": "us_003",
+      "name": ""
+    },
+    "rl_022": {
+      "id": "rl_022",
+      "kind": "association",
+      "sourceId": "ac_002",
+      "targetId": "us_006",
+      "name": ""
+    },
+    "rl_023": {
+      "id": "rl_023",
+      "kind": "association",
+      "sourceId": "ac_002",
+      "targetId": "us_002",
+      "name": ""
+    },
+    "rl_024": {
+      "id": "rl_024",
+      "kind": "association",
+      "sourceId": "ac_002",
+      "targetId": "us_005",
+      "name": ""
+    },
+    "rl_025": {
+      "id": "rl_025",
+      "kind": "association",
+      "sourceId": "ac_002",
+      "targetId": "us_004",
+      "name": ""
+    },
+    "rl_026": {
+      "id": "rl_026",
+      "kind": "association",
+      "sourceId": "ac_001",
+      "targetId": "us_003",
+      "name": ""
+    },
+    "rl_027": {
+      "id": "rl_027",
+      "kind": "association",
+      "sourceId": "ac_003",
+      "targetId": "us_004",
+      "name": ""
+    },
+    "rl_028": {
+      "id": "rl_028",
+      "kind": "include",
+      "sourceId": "us_004",
+      "targetId": "us_001",
+      "name": ""
+    },
+    "rl_029": {
+      "id": "rl_029",
+      "kind": "extend",
+      "sourceId": "us_002",
+      "targetId": "us_005",
+      "name": ""
+    },
+    "rl_030": {
+      "id": "rl_030",
+      "kind": "extend",
+      "sourceId": "us_006",
+      "targetId": "us_005",
+      "name": ""
+    }
+  },
+  "diagrams": {
+    "dg_001": {
+      "id": "dg_001",
+      "kind": "pkg",
+      "name": "Packages",
+      "ownerId": "pa_001",
+      "symbols": [
+        {
+          "id": "sy_001",
+          "elementId": "pa_007",
+          "x": 400,
+          "y": 40,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_002",
+          "elementId": "pa_008",
+          "x": 400,
+          "y": 260,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_003",
+          "elementId": "pa_006",
+          "x": 780,
+          "y": 260,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_004",
+          "elementId": "pa_003",
+          "x": 40,
+          "y": 370,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_005",
+          "elementId": "pa_004",
+          "x": 400,
+          "y": 480,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_006",
+          "elementId": "pa_002",
+          "x": 780,
+          "y": 480,
+          "w": 220,
+          "h": 90
+        },
+        {
+          "id": "sy_007",
+          "elementId": "pa_005",
+          "x": 40,
+          "y": 600,
+          "w": 220,
+          "h": 90
+        }
+      ],
+      "paths": [
+        {
+          "id": "pa_001",
+          "refId": "rl_017"
+        },
+        {
+          "id": "pa_002",
+          "refId": "rl_014"
+        },
+        {
+          "id": "pa_003",
+          "refId": "rl_019"
+        },
+        {
+          "id": "pa_004",
+          "refId": "rl_020"
+        },
+        {
+          "id": "pa_005",
+          "refId": "rl_015"
+        },
+        {
+          "id": "pa_006",
+          "refId": "rl_016"
+        },
+        {
+          "id": "pa_007",
+          "refId": "rl_018"
+        }
+      ]
+    },
+    "dg_002": {
+      "id": "dg_002",
+      "kind": "bdd",
+      "name": "The shell",
+      "ownerId": "pa_008",
+      "symbols": [
+        {
+          "id": "sy_008",
+          "elementId": "bl_014",
+          "x": 560,
+          "y": 40,
+          "w": 260,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_009",
+          "elementId": "bl_016",
+          "x": 40,
+          "y": 300,
+          "w": 200,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_010",
+          "elementId": "bl_018",
+          "x": 300,
+          "y": 300,
+          "w": 240,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_011",
+          "elementId": "bl_011",
+          "x": 640,
+          "y": 300,
+          "w": 300,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_012",
+          "elementId": "bl_015",
+          "x": 1100,
+          "y": 300,
+          "w": 220,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_013",
+          "elementId": "bl_010",
+          "x": 180,
+          "y": 560,
+          "w": 200,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_014",
+          "elementId": "bl_012",
+          "x": 420,
+          "y": 560,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_015",
+          "elementId": "bl_019",
+          "x": 640,
+          "y": 560,
+          "w": 190,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_016",
+          "elementId": "bl_007",
+          "x": 870,
+          "y": 560,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_017",
+          "elementId": "bl_020",
+          "x": 1090,
+          "y": 560,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_018",
+          "elementId": "bl_013",
+          "x": 1310,
+          "y": 560,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_019",
+          "elementId": "bl_008",
+          "x": 870,
+          "y": 800,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        }
+      ],
+      "paths": [
+        {
+          "id": "pa_008",
+          "refId": "pr_007"
+        },
+        {
+          "id": "pa_009",
+          "refId": "pr_008"
+        },
+        {
+          "id": "pa_010",
+          "refId": "pr_009"
+        },
+        {
+          "id": "pa_011",
+          "refId": "pr_006"
+        },
+        {
+          "id": "pa_012",
+          "refId": "pr_010"
+        },
+        {
+          "id": "pa_013",
+          "refId": "pr_011"
+        },
+        {
+          "id": "pa_014",
+          "refId": "pr_002"
+        },
+        {
+          "id": "pa_015",
+          "refId": "pr_003"
+        },
+        {
+          "id": "pa_016",
+          "refId": "pr_005"
+        },
+        {
+          "id": "pa_017",
+          "refId": "pr_004"
+        },
+        {
+          "id": "pa_018",
+          "refId": "pr_001"
+        }
+      ]
+    },
+    "dg_003": {
+      "id": "dg_003",
+      "kind": "ibd",
+      "name": "The bridge",
+      "ownerId": "bl_011",
+      "contextId": "bl_011",
+      "symbols": [
+        {
+          "id": "sy_020",
+          "elementId": "pr_002",
+          "x": 80,
+          "y": 160,
+          "w": 240,
+          "h": 200,
+          "ports": {
+            "po_008": {
+              "side": "r",
+              "t": 0.3
+            },
+            "po_007": {
+              "side": "r",
+              "t": 0.7
+            }
+          }
+        },
+        {
+          "id": "sy_021",
+          "elementId": "pr_003",
+          "x": 500,
+          "y": 160,
+          "w": 420,
+          "h": 260,
+          "ports": {
+            "po_003": {
+              "side": "l",
+              "t": 0.5
+            },
+            "po_004": {
+              "side": "b",
+              "t": 0.15
+            },
+            "po_002": {
+              "side": "b",
+              "t": 0.85
+            },
+            "po_001": {
+              "side": "r",
+              "t": 0.5
+            }
+          }
+        },
+        {
+          "id": "sy_022",
+          "elementId": "pr_005",
+          "x": 1100,
+          "y": 200,
+          "w": 260,
+          "h": 120,
+          "ports": {
+            "po_009": {
+              "side": "l",
+              "t": 0.5
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "id": "pa_019",
+          "refId": "rl_001"
+        },
+        {
+          "id": "pa_020",
+          "refId": "rl_002"
+        },
+        {
+          "id": "pa_021",
+          "refId": "rl_004"
+        },
+        {
+          "id": "pa_022",
+          "refId": "rl_005"
+        },
+        {
+          "id": "pa_023",
+          "refId": "rl_003"
+        }
+      ],
+      "framePorts": {
+        "po_005": {
+          "side": "b",
+          "t": 0.3
+        },
+        "po_006": {
+          "side": "b",
+          "t": 0.75
+        }
+      }
+    },
+    "dg_004": {
+      "id": "dg_004",
+      "kind": "bdd",
+      "name": "Who is hosted",
+      "ownerId": "pa_003",
+      "symbols": [
+        {
+          "id": "sy_023",
+          "elementId": "bl_014",
+          "x": 80,
+          "y": 40,
+          "w": 200,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_024",
+          "elementId": "bl_002",
+          "x": 520,
+          "y": 40,
+          "w": 240,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_025",
+          "elementId": "bl_008",
+          "x": 1100,
+          "y": 40,
+          "w": 200,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_026",
+          "elementId": "bl_009",
+          "x": 1100,
+          "y": 520,
+          "w": 200,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_027",
+          "elementId": "bl_006",
+          "x": 40,
+          "y": 300,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_028",
+          "elementId": "bl_004",
+          "x": 250,
+          "y": 300,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_029",
+          "elementId": "bl_001",
+          "x": 460,
+          "y": 300,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_030",
+          "elementId": "bl_003",
+          "x": 670,
+          "y": 300,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        },
+        {
+          "id": "sy_031",
+          "elementId": "bl_005",
+          "x": 880,
+          "y": 300,
+          "w": 180,
+          "h": 0,
+          "hide": {
+            "values": true,
+            "parts": true,
+            "ports": true,
+            "operations": true,
+            "references": true
+          }
+        }
+      ],
+      "paths": [
+        {
+          "id": "pa_024",
+          "refId": "rl_011"
+        },
+        {
+          "id": "pa_025",
+          "refId": "rl_012"
+        },
+        {
+          "id": "pa_026",
+          "refId": "rl_013"
+        },
+        {
+          "id": "pa_027",
+          "refId": "rl_006"
+        },
+        {
+          "id": "pa_028",
+          "refId": "rl_007"
+        },
+        {
+          "id": "pa_029",
+          "refId": "rl_008"
+        },
+        {
+          "id": "pa_030",
+          "refId": "rl_009"
+        },
+        {
+          "id": "pa_031",
+          "refId": "rl_010"
+        }
+      ]
+    },
+    "dg_005": {
+      "id": "dg_005",
+      "kind": "uc",
+      "name": "What it adds",
+      "ownerId": "pa_009",
+      "symbols": [
+        {
+          "id": "sy_032",
+          "elementId": "bl_021",
+          "x": 260,
+          "y": 40,
+          "w": 520,
+          "h": 560
+        },
+        {
+          "id": "sy_033",
+          "elementId": "ac_002",
+          "x": 60,
+          "y": 260,
+          "w": 0,
+          "h": 0
+        },
+        {
+          "id": "sy_034",
+          "elementId": "ac_001",
+          "x": 60,
+          "y": 60,
+          "w": 0,
+          "h": 0
+        },
+        {
+          "id": "sy_035",
+          "elementId": "ac_003",
+          "x": 880,
+          "y": 360,
+          "w": 0,
+          "h": 0
+        },
+        {
+          "id": "sy_036",
+          "elementId": "us_003",
+          "x": 330,
+          "y": 90,
+          "w": 200,
+          "h": 0
+        },
+        {
+          "id": "sy_037",
+          "elementId": "us_005",
+          "x": 330,
+          "y": 230,
+          "w": 200,
+          "h": 0
+        },
+        {
+          "id": "sy_038",
+          "elementId": "us_006",
+          "x": 560,
+          "y": 160,
+          "w": 190,
+          "h": 0
+        },
+        {
+          "id": "sy_039",
+          "elementId": "us_002",
+          "x": 560,
+          "y": 300,
+          "w": 190,
+          "h": 0
+        },
+        {
+          "id": "sy_040",
+          "elementId": "us_004",
+          "x": 330,
+          "y": 400,
+          "w": 200,
+          "h": 0
+        },
+        {
+          "id": "sy_041",
+          "elementId": "us_001",
+          "x": 560,
+          "y": 470,
+          "w": 190,
+          "h": 0
+        }
+      ],
+      "paths": [
+        {
+          "id": "pa_032",
+          "refId": "rl_021"
+        },
+        {
+          "id": "pa_033",
+          "refId": "rl_026"
+        },
+        {
+          "id": "pa_034",
+          "refId": "rl_024"
+        },
+        {
+          "id": "pa_035",
+          "refId": "rl_022"
+        },
+        {
+          "id": "pa_036",
+          "refId": "rl_030"
+        },
+        {
+          "id": "pa_037",
+          "refId": "rl_023"
+        },
+        {
+          "id": "pa_038",
+          "refId": "rl_029"
+        },
+        {
+          "id": "pa_039",
+          "refId": "rl_025"
+        },
+        {
+          "id": "pa_040",
+          "refId": "rl_027"
+        },
+        {
+          "id": "pa_041",
+          "refId": "rl_028"
+        }
+      ]
+    }
+  }
+}

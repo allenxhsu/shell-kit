@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-26 -36 1092 798" width="1092" height="798"><style>
+text{font-family:Helvetica, Arial, sans-serif;font-size:12px;fill:#111418;dominant-baseline:auto}
+.d-mono{font-family:Menlo, Consolas, monospace;font-size:11px;fill:#2d343c}
+.d-name{font-family:Helvetica, Arial, sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.04em}
+.d-italic{font-style:italic}
+.d-comp{font-size:10.5px;font-style:italic;fill:#5b6470}
+.d-frame{fill:none;stroke:#111418;stroke-width:1}
+.d-frame-tab{fill:#ffffff;stroke:#111418;stroke-width:1}
+.d-sym .d-shape{fill:#f4f8fd;stroke:#111418}
+.d-sym .d-rule,.d-sym .d-stick{stroke:#111418}
+.d-sym.c-b .d-shape{fill:#fdf8ee;stroke:#111418}
+.d-sym.c-b .d-rule,.d-sym.c-b .d-stick{stroke:#111418}
+.d-sym.c-c .d-shape{fill:#fbf3f6;stroke:#111418}
+.d-sym.c-c .d-rule,.d-sym.c-c .d-stick{stroke:#111418}
+.d-sym.c-n .d-shape{fill:#fffbe6;stroke:#5b6470}
+.d-sym.c-n .d-rule,.d-sym.c-n .d-stick{stroke:#5b6470}
+.d-shape{stroke-width:1.2}
+.d-shape.dashed{stroke-dasharray:6 4}
+.d-rule{stroke-width:.8;opacity:.55;fill:none}
+.d-stick{fill:none;stroke-width:1.5}
+.d-port{fill:#ffffff;stroke:#111418;stroke-width:1.2}
+.d-port-dir{fill:#111418;stroke:none}
+.d-line{fill:none;stroke:#2d343c;stroke-width:1.2}
+.d-line.dashed{stroke-dasharray:6 4}
+.d-head{fill:none;stroke:#2d343c;stroke-width:1.2}
+.d-head.filled{fill:#2d343c}
+.d-head.hollow{fill:#ffffff}
+.d-hit{fill:none;stroke:transparent;stroke-width:12}
+.d-label-bg{fill:#ffffff;opacity:.85}
+</style><rect x="-26" y="-36" width="1092" height="798" fill="#fff"/><rect class="d-frame" x="-10" y="-20" width="1060" height="766"/><path class="d-frame-tab" d="M-10 -20h338.2v14l-10 10H-10z"/><text class="d-mono" x="0" y="-4">pkg [package] shell-kit architecture [Packages]</text><g class="d-symbols"><g class="d-sym " data-sym="sy_001" transform="translate(400 40)"><path class="d-shape" d="M0 0H70V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">Tests</text></g><g class="d-sym " data-sym="sy_002" transform="translate(400 260)"><path class="d-shape" d="M0 0H106.9V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">ToolkitShell</text></g><g class="d-sym " data-sym="sy_003" transform="translate(780 260)"><path class="d-shape" d="M0 0H130.5V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">sync-kit/swift</text></g><g class="d-sym " data-sym="sy_004" transform="translate(40 370)"><path class="d-shape" d="M0 0H108.3V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">Hosted apps</text></g><g class="d-sym " data-sym="sy_005" transform="translate(400 480)"><path class="d-shape" d="M0 0H70V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">js</text></g><g class="d-sym " data-sym="sy_006" transform="translate(780 480)"><path class="d-shape" d="M0 0H88.8V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">Examples</text></g><g class="d-sym " data-sym="sy_007" transform="translate(40 600)"><path class="d-shape" d="M0 0H75.2V20H0Z"/><rect class="d-shape" y="20" width="220" height="76"/><text class="d-name" x="8" y="14" text-anchor="start">scripts</text></g></g><g class="d-paths"><g class="d-path" data-path="pa_001"><path class="d-hit" d="M510 136L510 198L510 260"/><path class="d-line dashed" d="M510 136L510 198L510 260"/><path class="d-head" transform="translate(510 260) rotate(90)" d="M-11 -5L0 0L-11 5"/></g><g class="d-path" data-path="pa_002"><path class="d-hit" d="M620 292L700 292L700 308L780 308"/><path class="d-line dashed" d="M620 292L700 292L700 308L780 308"/><path class="d-head" transform="translate(780 308) rotate(0)" d="M-11 -5L0 0L-11 5"/><rect class="d-label-bg" x="619.7" y="274" width="80.6" height="15"/><text class="d-mono" x="660" y="285" text-anchor="middle">PairingFlow</text></g><g class="d-path" data-path="pa_003"><path class="d-hit" d="M260 402L330 402L330 308L400 308"/><path class="d-line dashed" d="M260 402L330 402L330 308L400 308"/><path class="d-head" transform="translate(400 308) rotate(0)" d="M-11 -5L0 0L-11 5"/></g><g class="d-path" data-path="pa_004"><path class="d-hit" d="M260 434L330 434L330 512L400 512"/><path class="d-line dashed" d="M260 434L330 434L330 512L400 512"/><path class="d-head" transform="translate(400 512) rotate(0)" d="M-11 -5L0 0L-11 5"/></g><g class="d-path" data-path="pa_005"><path class="d-hit" d="M780 512L700 512L700 324L620 324"/><path class="d-line dashed" d="M780 512L700 512L700 324L620 324"/><path class="d-head" transform="translate(620 324) rotate(180)" d="M-11 -5L0 0L-11 5"/></g><g class="d-path" data-path="pa_006"><path class="d-hit" d="M780 544L700 544L700 528L620 528"/><path class="d-line dashed" d="M780 544L700 544L700 528L620 528"/><path class="d-head" transform="translate(620 528) rotate(180)" d="M-11 -5L0 0L-11 5"/></g><g class="d-path" data-path="pa_007"><path class="d-hit" d="M260 648L330 648L330 544L400 544"/><path class="d-line dashed" d="M260 648L330 648L330 544L400 544"/><path class="d-head" transform="translate(400 544) rotate(0)" d="M-11 -5L0 0L-11 5"/></g></g><g class="d-ports"></g></svg>

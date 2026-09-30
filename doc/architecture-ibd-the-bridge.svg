@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 1422 532" width="1422" height="532"><style>
+text{font-family:Helvetica, Arial, sans-serif;font-size:12px;fill:#111418;dominant-baseline:auto}
+.d-mono{font-family:Menlo, Consolas, monospace;font-size:11px;fill:#2d343c}
+.d-name{font-family:Helvetica, Arial, sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.04em}
+.d-italic{font-style:italic}
+.d-comp{font-size:10.5px;font-style:italic;fill:#5b6470}
+.d-frame{fill:none;stroke:#111418;stroke-width:1}
+.d-frame-tab{fill:#ffffff;stroke:#111418;stroke-width:1}
+.d-sym .d-shape{fill:#f4f8fd;stroke:#111418}
+.d-sym .d-rule,.d-sym .d-stick{stroke:#111418}
+.d-sym.c-b .d-shape{fill:#fdf8ee;stroke:#111418}
+.d-sym.c-b .d-rule,.d-sym.c-b .d-stick{stroke:#111418}
+.d-sym.c-c .d-shape{fill:#fbf3f6;stroke:#111418}
+.d-sym.c-c .d-rule,.d-sym.c-c .d-stick{stroke:#111418}
+.d-sym.c-n .d-shape{fill:#fffbe6;stroke:#5b6470}
+.d-sym.c-n .d-rule,.d-sym.c-n .d-stick{stroke:#5b6470}
+.d-shape{stroke-width:1.2}
+.d-shape.dashed{stroke-dasharray:6 4}
+.d-rule{stroke-width:.8;opacity:.55;fill:none}
+.d-stick{fill:none;stroke-width:1.5}
+.d-port{fill:#ffffff;stroke:#111418;stroke-width:1.2}
+.d-port-dir{fill:#111418;stroke:none}
+.d-line{fill:none;stroke:#2d343c;stroke-width:1.2}
+.d-line.dashed{stroke-dasharray:6 4}
+.d-head{fill:none;stroke:#2d343c;stroke-width:1.2}
+.d-head.filled{fill:#2d343c}
+.d-head.hollow{fill:#ffffff}
+.d-hit{fill:none;stroke:transparent;stroke-width:12}
+.d-label-bg{fill:#ffffff;opacity:.85}
+</style><rect x="4" y="4" width="1422" height="532" fill="#fff"/><rect class="d-frame" x="20" y="20" width="1390" height="500"/><path class="d-frame-tab" d="M20 20h338.2v14l-10 10H20z"/><text class="d-mono" x="30" y="36">ibd [block] EditorWindowController [The bridge]</text><g class="d-symbols"><g class="d-sym " data-sym="sy_020" transform="translate(80 160)"><rect class="d-shape" width="240" height="200"/><text class="d-name" x="120" y="22" text-anchor="middle">document : WebDocument</text></g><g class="d-sym " data-sym="sy_021" transform="translate(500 160)"><rect class="d-shape" width="420" height="260"/><text class="d-name" x="210" y="22" text-anchor="middle">page : Web page</text></g><g class="d-sym " data-sym="sy_022" transform="translate(1100 200)"><rect class="d-shape" width="260" height="120"/><text class="d-name" x="130" y="22" text-anchor="middle">webRoot : WebRoot</text></g></g><g class="d-paths"><g class="d-path" data-path="pa_019"><path class="d-hit" d="M320 220L410 220L410 290L500 290"/><path class="d-line" d="M320 220L410 220L410 290L500 290"/></g><g class="d-path" data-path="pa_020"><path class="d-hit" d="M500 290L410 290L410 300L320 300"/><path class="d-line" d="M500 290L410 290L410 300L320 300"/></g><g class="d-path" data-path="pa_021"><path class="d-hit" d="M437 520L437 470L563 470L563 420"/><path class="d-line" d="M437 520L437 470L563 470L563 420"/></g><g class="d-path" data-path="pa_022"><path class="d-hit" d="M857 420L857 470L1063 470L1063 520"/><path class="d-line" d="M857 420L857 470L1063 470L1063 520"/></g><g class="d-path" data-path="pa_023"><path class="d-hit" d="M1100 260L1010 260L1010 290L920 290"/><path class="d-line" d="M1100 260L1010 260L1010 290L920 290"/></g></g><g class="d-ports"><g class="d-portg" data-port="pr_002|po_008"><rect class="d-port" x="313" y="213" width="14" height="14"/><path class="d-port-dir" transform="translate(320 220) rotate(360)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="309" y="224" text-anchor="end">text</text></g><g class="d-portg" data-port="pr_002|po_007"><rect class="d-port" x="313" y="293" width="14" height="14"/><path class="d-port-dir" transform="translate(320 300) rotate(180)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="309" y="304" text-anchor="end">report</text></g><g class="d-portg" data-port="pr_003|po_004"><rect class="d-port" x="556" y="413" width="14" height="14"/><path class="d-port-dir" transform="translate(563 420) rotate(270)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="563" y="408" text-anchor="middle">window.&lt;name&gt;Host</text></g><g class="d-portg" data-port="pr_003|po_002"><rect class="d-port" x="850" y="413" width="14" height="14"/><path class="d-port-dir" transform="translate(857 420) rotate(450)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="857" y="408" text-anchor="middle">messageHandlers.&lt;name&gt;</text></g><g class="d-portg" data-port="pr_003|po_003"><rect class="d-port" x="493" y="283" width="14" height="14"/><text class="d-mono" x="511" y="294" text-anchor="start">model</text></g><g class="d-portg" data-port="pr_003|po_001"><rect class="d-port" x="913" y="283" width="14" height="14"/><path class="d-port-dir" transform="translate(920 290) rotate(180)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="909" y="294" text-anchor="end">fetch</text></g><g class="d-portg" data-port="pr_005|po_009"><rect class="d-port" x="1093" y="253" width="14" height="14"/><path class="d-port-dir" transform="translate(1100 260) rotate(180)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="1111" y="264" text-anchor="start">&lt;scheme&gt;://app/</text></g><g class="d-portg" data-port="|po_005"><rect class="d-port" x="430" y="513" width="14" height="14"/><path class="d-port-dir" transform="translate(437 520) rotate(270)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="437" y="508" text-anchor="middle">evaluateJavaScript</text></g><g class="d-portg" data-port="|po_006"><rect class="d-port" x="1055.5" y="513" width="14" height="14"/><path class="d-port-dir" transform="translate(1062.5 520) rotate(450)" d="M-3 -4L4 0L-3 4Z"/><text class="d-mono" x="1062.5" y="508" text-anchor="middle">userContentController</text></g></g></svg>
