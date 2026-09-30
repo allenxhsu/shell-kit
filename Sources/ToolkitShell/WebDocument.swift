@@ -1,3 +1,4 @@
+#if os(macOS)
 import AppKit
 import UniformTypeIdentifiers
 
@@ -112,3 +113,4 @@ open class WebDocument: NSDocument {
         }
     }
 }
+#endif

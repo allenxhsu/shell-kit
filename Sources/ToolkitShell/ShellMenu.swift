@@ -1,3 +1,4 @@
+#if os(macOS)
 import AppKit
 
 /// Menu-bar building blocks. Document commands (New, Open, Save, Revert,
@@ -175,19 +176,29 @@ open class ShellAppDelegate: NSObject, NSApplicationDelegate {
                 if let error { NSDocumentController.shared.presentError(error) }
             }
         }
+        // A deep link in the app's `urlScheme` goes to the front window's page
+        // as `event({ type: 'open', url })`.
+        for url in others where !url.isFileURL {
+            guard let event = ShellConfig.current.openEvent(for: url) else { continue }
+            let editors = NSDocumentController.shared.documents.flatMap(\.windowControllers)
+                .compactMap { $0 as? EditorWindowController }
+            let front = editors.first { $0.window?.isMainWindow == true } ?? editors.first
+            if let front { front.send(event) } else { NSLog("%@: no window for %@", ShellConfig.current.appName, url.absoluteString) }
+        }
     }
 
-    /// An app that does not pair should behave exactly as it did before that
-    /// method existed. Hiding the selector is how: with no delegate method to
-    /// call, AppKit keeps its own document-opening path, untouched.
+    /// An app that neither pairs nor takes deep links should behave exactly as
+    /// it did before that method existed. Hiding the selector is how: with no
+    /// delegate method to call, AppKit keeps its own document-opening path, untouched.
     open override func responds(to selector: Selector!) -> Bool {
         if selector == #selector(application(_:open:)) {
-            return ShellConfig.isConfigured && ShellConfig.current.pairsWithPortal
+            return ShellConfig.isConfigured && (ShellConfig.current.pairsWithPortal || ShellConfig.current.urlScheme != nil)
         }
         return super.responds(to: selector)
     }
 }
 
+/// The Mac entry point. The iPhone's is `ShellScene`.
 public enum ShellApp {
     /// Configure, build the bar with `menu`, and run. Never returns.
     public static func run(config: ShellConfig, delegate: NSApplicationDelegate = ShellAppDelegate(), menu: () -> NSMenu) -> Never {
@@ -200,3 +211,4 @@ public enum ShellApp {
         exit(0)
     }
 }
+#endif

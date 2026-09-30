@@ -9,16 +9,29 @@ import UniformTypeIdentifiers
 /// own `localStorage` (where the shared appearance preference lives).
 public enum WebRoot {
     public static var scheme: String { ShellConfig.current.scheme }
-    public static var indexURL: URL { URL(string: "\(scheme)://app/index.html")! }
+    public static var indexURL: URL { indexURL(scheme: scheme) }
+    public static func indexURL(scheme: String) -> URL { URL(string: "\(scheme)://app/index.html")! }
 
-    /// The bundled copy in a built app (`Contents/Resources/web`); the
-    /// repository itself under `swift run` and `swift test`.
+    /// Where the running app's page comes from: see `directory(for:bundledWeb:platform:)`.
     public static var directory: URL {
-        if let bundled = Bundle.main.resourceURL?.appendingPathComponent("web"),
-           FileManager.default.fileExists(atPath: bundled.appendingPathComponent("index.html").path) {
-            return bundled
+        directory(for: ShellConfig.current, bundledWeb: Bundle.main.resourceURL?.appendingPathComponent("web"),
+                  platform: .current)
+    }
+
+    /// On iOS, the app's configured `webRoot` — the folder it bundled, and
+    /// nothing guessed. On macOS, the bundled copy in a built app
+    /// (`Contents/Resources/web`, when it has an `index.html`); the
+    /// repository itself under `swift run` and `swift test`.
+    public static func directory(for config: ShellConfig, bundledWeb: URL?, platform: ShellPlatform) -> URL {
+        switch platform {
+        case .ios:
+            return config.webRoot
+        case .macos:
+            if let bundledWeb, FileManager.default.fileExists(atPath: bundledWeb.appendingPathComponent("index.html").path) {
+                return bundledWeb
+            }
+            return config.repositoryRoot
         }
-        return ShellConfig.current.repositoryRoot
     }
 
     /// The file a request names, or nil when it points outside the web root.
@@ -51,11 +64,18 @@ public enum WebRoot {
     }
 }
 
+/// Serves `<scheme>://app/…` from the web root, on both platforms.
 public final class BundleSchemeHandler: NSObject, WKURLSchemeHandler {
-    public override init() {}
+    private let root: URL?
+
+    /// `root` nil: `WebRoot.directory`, looked up per request.
+    public init(root: URL? = nil) {
+        self.root = root
+        super.init()
+    }
 
     public func webView(_ webView: WKWebView, start task: WKURLSchemeTask) {
-        guard let url = task.request.url, let file = WebRoot.file(for: url, under: WebRoot.directory),
+        guard let url = task.request.url, let file = WebRoot.file(for: url, under: root ?? WebRoot.directory),
               let data = try? Data(contentsOf: file) else {
             task.didFailWithError(URLError(.fileDoesNotExist))
             return

@@ -1,6 +1,6 @@
 // The page half of the sample: what any toolkit app does with the shell, cut
 // down to a text box. The part worth reading is `remote`.
-import { hosted, post, initHost } from './host.js';
+import { hosted, platform, post, initHost } from './host.js';
 
 const el = (id) => document.getElementById(id);
 const note = el('note');
@@ -60,6 +60,24 @@ note.addEventListener('input', () => changed());
 el('hosted').textContent = hosted ? 'yes' : 'no — open it in the built app';
 el('hosted').className = hosted ? 'yes' : 'no';
 el('doc-name').textContent = fileName;
+el('platform').textContent = platform ?? 'browser';
+
+// A message the shell does not know goes to the app's own handler — both
+// samples register `echo` — and the answer comes back through `event`, as
+// does a deep link (`{ type: 'open', url }`) on the iPhone.
+el('echo').addEventListener('click', () => post({ type: 'echo', text: el('echo-text').value }));
+function event(e) {
+  el('last-event').innerHTML = '';
+  const code = document.createElement('code');
+  code.textContent = JSON.stringify(e);
+  el('last-event').append(code);
+  post({ type: 'log', text: `event ${e.type}` });
+}
+
+// The Mac has menu items for these; a phone has only the page.
+el('pair').addEventListener('click', () => post({ type: 'portal.pair' }));
+el('sign-out').addEventListener('click', () => post({ type: 'portal.signOut' }));
+el('portal-buttons').hidden = !hosted;
 
 initHost({
   name: 'sample',
@@ -67,4 +85,5 @@ initHost({
   command: (id) => post({ type: 'log', text: `unhandled command ${id}` }),
   saved: (name) => { fileName = name; el('doc-name').textContent = name; },
   remote,
+  event,
 });

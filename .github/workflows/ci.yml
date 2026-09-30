@@ -1,0 +1,65 @@
+# swift build + swift test on macOS, and the iPhone sample built for the
+# Simulator — the only place either half of the package is compiled, since
+# shell-kit has no Linux build.
+#
+# The package depends on ../sync-kit/swift, and sync-kit is private. The
+# public flow repository vendors sync-kit, swift/ folder included, so CI
+# checks flow out beside shell-kit and points sync-kit at its copy:
+#
+#   $GITHUB_WORKSPACE/shell-kit      this repository
+#   $GITHUB_WORKSPACE/flow           allenxhsu/flow
+#   $GITHUB_WORKSPACE/sync-kit  ->   flow/sync-kit
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: shell-kit
+      - uses: actions/checkout@v4
+        with:
+          repository: allenxhsu/flow
+          path: flow
+      - name: sync-kit beside shell-kit (flow's vendored copy)
+        run: |
+          ln -s flow/sync-kit sync-kit
+          test -f sync-kit/swift/Package.swift
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: host.js (node)
+        working-directory: shell-kit
+        run: |
+          node --test js/host.test.mjs
+          node scripts/copy-into.mjs --check Examples/sample-web/host.js
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: swift build (macOS)
+        working-directory: shell-kit
+        run: swift build
+      - name: swift test (macOS)
+        working-directory: shell-kit
+        run: swift test
+
+      - name: XcodeGen
+        run: brew install xcodegen
+      - name: iOS sample for the Simulator
+        working-directory: shell-kit/Examples/ios-sample
+        run: |
+          xcodegen generate
+          xcodebuild -project ShellSample.xcodeproj -scheme ShellSample \
+            -destination 'generic/platform=iOS Simulator' -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO build

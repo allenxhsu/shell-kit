@@ -2,6 +2,10 @@ import XCTest
 import SyncKit
 @testable import ToolkitShell
 
+// The Mac shell's own tests: menus, documents, the app delegate, and the
+// build scripts they run through Process. `swift test` runs on macOS only.
+#if os(macOS)
+
 /// Pairing with the Portal: the three places it can silently not work.
 ///
 /// A scheme the bundle does not register, a `remote` the page's half of the
@@ -43,6 +47,15 @@ final class PortalTests: XCTestCase {
         // still says which scheme its bundle claims.
         XCTAssertEqual(pairingConfig(origin: nil, scheme: "test").connectScheme, "test")
         XCTAssertTrue(ShellAppDelegate().responds(to: #selector(ShellAppDelegate.application(_:open:))))
+    }
+
+    func testADeepLinkSchemeAlsoClaimsOpenedURLs() {
+        ShellConfig.current = ShellConfig(appName: "Test App", handlerName: "test", scheme: "test-app",
+                                          fileSuffix: ".test.json", documentNoun: "model", repositoryRoot: kitRoot,
+                                          urlScheme: "testapp")
+        XCTAssertFalse(ShellConfig.current.pairsWithPortal)
+        XCTAssertTrue(ShellAppDelegate().responds(to: #selector(ShellAppDelegate.application(_:open:))),
+                      "testapp://… links reach the page as open events, so the delegate has to take them")
     }
 
     func testThePortalItemsAreTheStandardTwo() {
@@ -102,8 +115,8 @@ final class PortalTests: XCTestCase {
 
         let host = try String(contentsOf: kitRoot.appendingPathComponent("js/host.js"), encoding: .utf8)
         let exposed = PortalBridge.hostAPINames(inJavaScript: host)
-        XCTAssertEqual(exposed, ["load", "command", "saved", "remote"],
-                       "the shell calls remote on every page; js/host.js has to expose it")
+        XCTAssertEqual(exposed, ["load", "command", "saved", "remote", "event"],
+                       "the shell calls remote and event on every page; js/host.js has to expose them")
     }
 
     func testTheRemoteMessageCarriesTheSyncSettings() {
@@ -253,3 +266,4 @@ private final class Recorder: @unchecked Sendable {
     var messages: [[String: String]] { lock.withLock { sent } }
     func record(_ message: [String: String]) { lock.withLock { sent.append(message) } }
 }
+#endif

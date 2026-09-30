@@ -1,3 +1,4 @@
+#if os(macOS)
 import AppKit
 import WebKit
 import UniformTypeIdentifiers
@@ -5,11 +6,14 @@ import UniformTypeIdentifiers
 /// A document window: a web view showing the app, and the message channel
 /// between the page and the document. `js/host.js` is the page's half.
 ///
-/// Subclass and override `handleMessage` to answer messages the kit does not
-/// know (an app-specific export, say); return true when you took it.
-open class EditorWindowController: NSWindowController, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate {
+/// A page message goes, in order, to `handleMessage` (override it, return
+/// true when you took it), then the shell's own types, then the app's
+/// `ShellConfig.handlers`. A handler answers through `send`, as the window is
+/// the handler's `ShellPage`.
+open class EditorWindowController: NSWindowController, ShellPage, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate {
     public private(set) var webView: WKWebView!
     public private(set) var pageReady = false
+    private var events = ShellEventQueue()
     private var pdfExporter: PDFExporter?
     private let config = ShellConfig.current
 
@@ -31,13 +35,10 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
         let wk = WKWebViewConfiguration()
         wk.setURLSchemeHandler(BundleSchemeHandler(), forURLScheme: config.scheme)
         wk.userContentController.add(WeakMessageHandler(self), name: name)
-        // Tell the page which handler it is talking to, before any of its modules load;
-        // and route page errors, which would otherwise vanish, to the app's log.
-        wk.userContentController.addUserScript(WKUserScript(source: """
-            window.__toolkitHost = '\(name)';
-            window.addEventListener('error', (e) => webkit.messageHandlers.\(name).postMessage({ type: 'log', text: String(e.message) + ' @ ' + e.filename + ':' + e.lineno }));
-            window.addEventListener('unhandledrejection', (e) => webkit.messageHandlers.\(name).postMessage({ type: 'log', text: 'unhandled: ' + String(e.reason) }));
-            """, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        // Tell the page which handler it is talking to and that this is the Mac,
+        // before any of its modules load; and route page errors to the app's log.
+        wk.userContentController.addUserScript(WKUserScript(source: ShellBridge.bootstrapScript(handlerName: name, platform: .macos),
+                                                            injectionTime: .atDocumentStart, forMainFrameOnly: true))
 
         webView = WKWebView(frame: window.contentLayoutRect, configuration: wk)
         webView.navigationDelegate = self
@@ -61,11 +62,19 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
     public func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let body = message.body as? [String: Any], let type = body["type"] as? String else { return }
         if handleMessage(type: type, body: body) { return }
+        let route = ShellMessage.dispatch(body, handlers: config.handlers, page: self) { type, body in
+            self.handleBuiltIn(type: type, body: body)
+        }
+        if case .unhandled(let type) = route { NSLog("%@: no handler for page message %@", config.appName, type) }
+    }
+
+    private func handleBuiltIn(type: String, body: [String: Any]) {
         switch type {
         case "ready":
             pageReady = true
             deliverPendingText()
             deliverRemote()
+            for event in events.pageReady() { deliver(event) }
         case "changed":
             if let json = body["json"] as? String {
                 webDocument?.pageDidChange(json: json, dirty: body["dirty"] as? Bool ?? false, name: body["name"] as? String ?? config.untitledName)
@@ -80,6 +89,14 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
         case "open": NSDocumentController.shared.openDocument(nil)
         case "save": webDocument?.save(nil)
         case "log": NSLog("%@ page: %@", config.appName, body["text"] as? String ?? "")
+        // The page's own Sync settings asking for what the menu items do.
+        case "portal.pair":
+            guard config.pairsWithPortal else { NSLog("%@: portal.pair, but the app has no portalOrigin", config.appName); return }
+            if let origin = body["origin"] as? String, !origin.isEmpty { ShellPortal.shared.origin = origin }
+            Task { await ShellPortal.shared.pairShowingErrors() }
+        case "portal.signOut":
+            guard config.pairsWithPortal else { return }
+            ShellPortal.shared.signOutOfToolkit(nil)
         default: break
         }
     }
@@ -88,6 +105,20 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
     open func handleMessage(type: String, body: [String: Any]) -> Bool { false }
 
     // MARK: App → page
+
+    /// `window.<name>Host.event(event)`, once the page is ready.
+    public func send(_ event: [String: Any]) {
+        for ready in events.enqueue(event) { deliver(ready) }
+    }
+
+    private func deliver(_ event: [String: Any]) {
+        guard let json = ShellEvent.json(event) else {
+            NSLog("%@: event %@ is not JSON; not sent", config.appName, String(describing: event["type"] ?? "?"))
+            return
+        }
+        webView.callAsyncJavaScript(ShellEvent.script(hostObject: config.hostObject), arguments: ["json": json],
+                                    in: nil, in: .page) { _ in }
+    }
 
     /// Give the page the text the document read, once both exist.
     public func deliverPendingText() {
@@ -190,6 +221,12 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
         else { completionHandler(panel.runModal() == .OK ? panel.urls : nil) }
     }
 
+    /// A new page (a reload) waits for its own `ready` before events go in.
+    public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        pageReady = false
+        events.pageUnloaded()
+    }
+
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         NSLog("%@ page failed to load: %@", config.appName, error.localizedDescription)
     }
@@ -198,11 +235,4 @@ open class EditorWindowController: NSWindowController, WKScriptMessageHandler, W
     }
 }
 
-/// `WKUserContentController` retains its handlers; this keeps the window controller out of that cycle.
-private final class WeakMessageHandler: NSObject, WKScriptMessageHandler {
-    weak var target: WKScriptMessageHandler?
-    init(_ target: WKScriptMessageHandler) { self.target = target }
-    func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
-        target?.userContentController(controller, didReceive: message)
-    }
-}
+#endif

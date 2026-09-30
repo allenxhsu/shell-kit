@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pairing Sample</title>
 <style>
   :root { color-scheme: dark; }
@@ -25,6 +26,15 @@
     background: #070b11; color: #dbe4f0; border: 1px solid #1d2733; border-radius: 8px;
     padding: 10px 12px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
   }
+  button {
+    font: inherit; color: #dbe4f0; background: #16202c; border: 1px solid #2a3a4c;
+    border-radius: 8px; padding: 6px 14px; margin: 0 8px 8px 0; cursor: pointer;
+  }
+  input[type=text] {
+    font: inherit; color: #dbe4f0; background: #070b11; border: 1px solid #1d2733;
+    border-radius: 8px; padding: 6px 10px; margin: 0 8px 8px 0; min-width: 12rem;
+  }
+  @media (max-width: 520px) { body { padding: 20px 16px; } dl { grid-template-columns: 7rem 1fr; } }
   ol { margin: 0; padding-left: 20px; color: #7d8ca3; }
   ol code { color: #dbe4f0; }
 </style>
@@ -37,6 +47,7 @@
     <h2>Shell</h2>
     <dl>
       <dt>Hosted</dt><dd id="hosted">—</dd>
+      <dt>Platform</dt><dd id="platform">—</dd>
       <dt>Document</dt><dd id="doc-name">—</dd>
     </dl>
   </section>
@@ -48,6 +59,21 @@
       <dt>Portal</dt><dd id="remote-url">—</dd>
       <dt>Device token</dt><dd id="remote-token">—</dd>
     </dl>
+  </section>
+
+  <section>
+    <h2>Events — <code>post({type: 'echo'})</code> → <code>event(…)</code></h2>
+    <input type="text" id="echo-text" value="hello" aria-label="Text to echo">
+    <button id="echo">Echo</button>
+    <dl>
+      <dt>Last event</dt><dd id="last-event"><code>—</code></dd>
+    </dl>
+  </section>
+
+  <section id="portal-buttons">
+    <h2>Portal — <code>portal.pair</code> / <code>portal.signOut</code></h2>
+    <button id="pair">Sign in to the toolkit…</button>
+    <button id="sign-out">Sign out</button>
   </section>
 
   <section>

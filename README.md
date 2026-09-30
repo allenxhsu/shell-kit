@@ -1,38 +1,62 @@
 # shell-kit
 
-The macOS shell shared by the toolkit's web apps (SysML Modeler, Project
-Planner, and the simpler single-window Profiler and Pyramid). An app keeps its
-model, diagrams and every editing rule in its web code, served with no build
-step; this package hosts that page in a `WKWebView` and adds what a browser tab
-cannot: document windows, a real menu bar, Finder file opening, native save
-panels, vector PDF export, and signing in to the toolkit's online Portal.
+The native shell shared by the toolkit's web apps — on the Mac SysML Modeler,
+Project Planner, and the simpler single-window Profiler and Pyramid; on the
+iPhone, Flow. An app keeps its model, diagrams and every editing rule in its
+web code, served with no build step; this package hosts that page in a
+`WKWebView` and adds what a browser tab cannot. On the Mac: document windows, a
+real menu bar, Finder file opening, native save panels and vector PDF export.
+On the iPhone: a full-screen app with its page bundled offline, deep links and
+the share sheet. On both: signing in to the toolkit's online Portal, and a
+two-way message channel for whatever else the app adds natively.
 
 ```
-Package.swift                 SwiftPM library "ToolkitShell" (macOS 14, Swift 6 toolchain)
+Package.swift                 SwiftPM library "ToolkitShell" (macOS 14, iOS 17, Swift 6 toolchain)
 Sources/ToolkitShell/
-  ShellConfig.swift           the per-app settings: names, scheme, file suffix, imports
+  ShellConfig.swift           the per-app settings: names, scheme, file suffix, imports,
+                              deep-link scheme, app message handlers, web root
+  ShellBridge.swift           both platforms: ShellPage, message routing, events to the page,
+                              the scripts injected before the page loads
   WebRoot.swift               <scheme>://app/… serving the web root; MIME table; path guard
+  ShellScene.swift            iOS: the SwiftUI Scene — one full-screen web view
   WebDocument.swift           NSDocument base: reads a file, hands its text to the page,
                               keeps the JSON the page reports, writes it back
   EditorWindowController.swift  the window, the WKWebView, the message channel
   PDFExporter.swift           SVG pages → one vector PDF, a page per diagram
   ShellMenu.swift             item / web / submenu / recentMenu and the standard menus
-  ShellPortal.swift           pairing with the Portal: the menu items, the Sync sheet,
-                              the Keychain, and `remote` into every open page
+  ShellPortal.swift           pairing with the Portal: the Keychain, and `remote` into
+                              every open page (both platforms)
+  ShellPortalMac.swift        macOS: the menu items and the Sync sheet
   ShellPlist.swift            reads a built bundle back: is the connect scheme registered?
 js/host.js                    the page's half of the bridge — apps vendor a copy
+js/host.test.mjs              node --test js/host.test.mjs
 scripts/copy-into.mjs         copies js/host.js into an app; --check reports drift
 scripts/url-types.mjs         the CFBundleURLTypes block for a build script's Info.plist
 scripts/dev-portal.mjs        a stand-in Portal, for pairing an app on this machine
 scripts/build-sample-app.sh   builds Examples/ into an app bundle
 Examples/sample-web/          the smallest page the shell can host, with pairing
-Sources/PairingSample/        and the ten lines of Swift around it
+Sources/PairingSample/        and the ten lines of Swift around it on the Mac,
+Examples/ios-sample/          and on the iPhone (an XcodeGen project.yml)
 Tests/                        swift test
+.github/workflows/ci.yml      swift build + swift test, the iOS sample for the Simulator
 ```
+
+Everything in `Sources/ToolkitShell` that touches AppKit is fenced with
+`#if os(macOS)`, and `ShellScene` with `#if os(iOS)`; the config, `WebRoot`,
+the message routing and the Portal's core are one copy for both.
 
 It depends on [`../sync-kit/swift`](../sync-kit/swift) for `PairingFlow`, so a
 clone needs `sync-kit` beside it — the same assumption the apps already make
-when they vendor sync-kit's JavaScript.
+when they vendor sync-kit's JavaScript. sync-kit is private; the public
+[flow](https://github.com/allenxhsu/flow) repository vendors it, `swift/`
+folder included, so a checkout without access to sync-kit can stand flow's
+copy in its place — which is what CI does:
+
+```bash
+git clone https://github.com/allenxhsu/flow
+ln -s flow/sync-kit sync-kit          # beside shell-kit/
+cd shell-kit && swift build && swift test
+```
 
 ## Adopting it
 
@@ -96,9 +120,11 @@ initHost({ name: 'myapp', load: loadText, command: runCommand, saved: markSaved 
 post({ type: 'changed', json: serialize(model), dirty, name: model.name });
 ```
 
-The shell injects `window.__toolkitHost = 'myapp'` before the page's modules
-load, so `hosted` is right at import time; `host.js` imports nothing, so a
-model layer that imports it still loads under Node.
+The shell injects `window.__toolkitHost = 'myapp'` (and
+`window.__toolkitPlatform`) before the page's modules load, so `hosted` and
+`platform` are right at import time; `host.js` imports nothing, so a model
+layer that imports it still loads under Node. Every `initHost` callback but
+`name` is optional.
 
 **4. Build the bundle** with your own script (see SysML's
 `macos/scripts/build-app.sh`, or `scripts/build-sample-app.sh` here): copy the
@@ -118,7 +144,8 @@ type into that `Info.plist` — see below.
 | `pdf` `{name, pages: [{svg, w, h}]}` | rendered offscreen by WebKit, joined with PDFKit: one vector page per diagram, each the diagram's size |
 | `new` `open` `save` | the page's own shortcuts, forwarded to AppKit |
 | `log` `{text}` | page errors, to the app's log |
-| anything else | `EditorWindowController.handleMessage(type:body:)` — override it |
+| `portal.pair` `{origin?}` / `portal.signOut` | what the Portal menu items do, asked for by the page (the iPhone has no menu) |
+| anything else | `EditorWindowController.handleMessage(type:body:)` if overridden, then `ShellConfig.handlers[type]` |
 
 | App → page | |
 |---|---|
@@ -126,6 +153,78 @@ type into that `Info.plist` — see below.
 | `window.<name>Host.command(id)` | a menu command |
 | `window.<name>Host.saved(name)` | the document was written |
 | `window.<name>Host.remote({url, token})` | the Portal this Mac is paired with, or two empty strings for signed out. The page's sync module treats them exactly as values typed into its own Sync settings |
+| `window.<name>Host.event(event)` | everything else: a handler's `page.send(…)`, a deep link as `{type: 'open', url}`. Held until the page has reported `ready` |
+
+The shell also sets `window.__toolkitPlatform` (`'macos'` or `'ios'`) before
+the page loads; `host.js` exports it as `platform`, `null` in a browser.
+
+**App handlers.** A message type the shell does not know goes to the app's
+`handlers`, and the handler answers through the page — the same on both
+platforms:
+
+```swift
+ShellConfig(appName: "My App", handlerName: "myapp", …,
+            handlers: ["echo": { message, page in
+                page.send(["type": "echo", "text": message["text"] as? String ?? ""])
+            }])
+```
+```js
+initHost({ name: 'myapp', event: (e) => { if (e.type === 'echo') show(e.text); } });
+post({ type: 'echo', text: 'hello' });
+```
+
+A handler is `@MainActor`; `page` is a `ShellPage` (`send(_:)` takes JSON
+values only). The shell's own types (`ShellMessage.builtInTypes`) never reach a
+handler, even one registered under the same name.
+
+## On the iPhone
+
+`ShellScene` is the whole app:
+
+```swift
+import SwiftUI
+import ToolkitShell
+
+@main struct MyApp: App {
+    var body: some Scene {
+        ShellScene(config: ShellConfig(
+            appName: "My App", handlerName: "myapp",
+            portalOrigin: "https://toolkit.example",          // optional: pairing
+            urlScheme: "myapp",                                // optional: deep links
+            handlers: ["echo": { message, page in page.send(["type": "echo"]) }],
+            webRoot: Bundle.main.url(forResource: "web", withExtension: nil)!))
+    }
+}
+```
+
+- **The page** is the app's web folder, bundled as a folder reference and
+  served from `<scheme>://app/…` (`scheme` defaults to `<handlerName>-app`)
+  through the same handler, path guard and MIME table as the Mac, so ES
+  modules and `localStorage` behave the same. No document fields are needed;
+  `fileSuffix`, `documentNoun` and the rest have defaults.
+- **The view** runs edge to edge in the page's background colour, with the web
+  view itself inside the safe area; no bounce, no pinch or double-tap zoom,
+  and Safari's Web Inspector attaches in debug builds. `alert`, `confirm` and
+  `prompt` show native alerts; links out open in Safari.
+- **Deep links:** `myapp://…` from anywhere (a widget, a Live Activity, a
+  notification) reaches the page as `event({ type: 'open', url })`, held until
+  the page is ready, so a cold launch loses nothing. Declare the scheme in the
+  app's `Info.plist` `CFBundleURLTypes`.
+- **Files:** `saveViaHost(blob, name)` opens the share sheet (Save to Files,
+  AirDrop, Mail). `<input type="file">` needs nothing: WebKit's own picker
+  offers Files and Photos.
+- **The Portal:** there is no menu, so the page asks — `post({ type:
+  'portal.pair' })` opens the same `ASWebAuthenticationSession` sign-in as the
+  Mac and `remote({url, token})` follows; `post({ type: 'portal.signOut' })`
+  revokes and forgets. `remote` is also sent on every `ready`. The connect
+  scheme follows `handlerName` as on the Mac and may be the same as
+  `urlScheme`: a `<scheme>://connect?…` link goes to pairing first.
+- **Documents, menus, PDF:** none. `changed`, `pdf`, `new`, `open` and `save`
+  are accepted and ignored, so one page can serve both shells; check
+  `platform` to hide what a phone cannot do.
+
+`Examples/ios-sample` is the sample page in `ShellScene` with an `echo`
+handler; `xcodegen generate` there makes the project (see its `project.yml`).
 
 ## Signing in to the Portal
 

@@ -1,3 +1,4 @@
+#if os(macOS)
 import AppKit
 import WebKit
 import PDFKit
@@ -60,3 +61,4 @@ public final class PDFExporter: NSObject, WKNavigationDelegate {
         renderNext()
     }
 }
+#endif
